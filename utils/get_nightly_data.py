@@ -313,8 +313,29 @@ def write_nightly_data(merge_notices_dict, date):
     with open(json_file, 'w') as f:
         json.dump(merge_notices_dict, f)
 
+def tbm_filter(merge_notices_dict):
+    tbm_terms = {'technology business management',
+                 'tbm',
+                 'tbma',
+                 'it spending transparency',
+                 'tbm framework',
+                 'it tower',
+                 'sub-towers',
+                 'cost pool',
+                 'sub-pools'}
+    tbm_notices = {k:[] for k in merge_notices_dict}
+    for notice_type in merge_notices_dict:
+        notices = merge_notices_dict[notice_type]
+        for notice in notices:
+            notice_values = " ".join(notice.values()).lower()
+            is_tbm = any(substring in notice_values for substring in tbm_terms)
+            if is_tbm:
+                tbm_notices[notice_type].append(notice)
+    
+    return tbm_notices
 
-def get_nightly_data(date = None):
+
+def get_nightly_data(date = None, tbm_filtering = True):
     '''
     Exectutes methods in fbo_nightly_scraper module.
     Parameters:
@@ -334,8 +355,11 @@ def get_nightly_data(date = None):
         #exit program if download_from_ftp() failed (this is logged by the module)
         sys.exit(1)
     merge_notices_dict = pseudo_xml_to_json(file_lines)
-    write_nightly_data(merge_notices_dict, date)
+    if tbm_filtering:
+        tbm_notices = tbm_filter(merge_notices_dict)
+        write_nightly_data(tbm_notices, date)
+    else:
+        write_nightly_data(merge_notices_dict, date)
 
-    
 if __name__ == '__main__':
     get_nightly_data()

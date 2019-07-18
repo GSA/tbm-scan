@@ -134,7 +134,7 @@ class GetNightlyDataTestCase(unittest.TestCase):
         try:
             get_nightly_data(date = date)
         except Exception as e:
-            self.fail('get_nightly_data() raised an Exceptio:  {e}')
+            self.fail(f'get_nightly_data() raised an Exceptio:  {e}')
         #cleanup here
         os.remove(os.path.join(os.getcwd(), 'data', f'{date}-result.json'))
         self.assertTrue(True)
