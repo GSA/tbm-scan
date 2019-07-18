@@ -335,7 +335,7 @@ def tbm_filter(merge_notices_dict):
     return tbm_notices
 
 
-def get_nightly_data(date = None, tbm_filter = True):
+def get_nightly_data(date = None, tbm_filtering = True):
     '''
     Exectutes methods in fbo_nightly_scraper module.
     Parameters:
@@ -355,7 +355,7 @@ def get_nightly_data(date = None, tbm_filter = True):
         #exit program if download_from_ftp() failed (this is logged by the module)
         sys.exit(1)
     merge_notices_dict = pseudo_xml_to_json(file_lines)
-    if tbm_filter:
+    if tbm_filtering:
         tbm_notices = tbm_filter(merge_notices_dict)
         write_nightly_data(tbm_notices, date)
     else:

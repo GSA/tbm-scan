@@ -58,7 +58,6 @@ def main():
         None
     """
     args = parser.parse_args()
-    print(args)
     fbo_dates = get_dates(start_date = args.start_date, end_date = args.end_date)
     # By default, the executor sets number of workers to the # of CPUs.
     with ProcessPoolExecutor() as executor:
