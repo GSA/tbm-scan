@@ -22,7 +22,7 @@ pipenv shell
 Now you can run the scans:
 
 ```bash
-python scan.py
+python tbm_scan.py
 ```
 
 ## Running the tests
