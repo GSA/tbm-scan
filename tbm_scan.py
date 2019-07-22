@@ -36,12 +36,20 @@ parser.add_argument('-tf',
                     '--tbm-filter',
                     type = str_to_bool,
                     nargs = '?',
-                    const=True, 
-                    default=False,
+                    const = True, 
+                    default = False,
                     dest = 'tbm_filter',
-                    help = "Whether or not to filter for TBM solicitations. Default is True")                  
+                    help = "Whether or not to filter for TBM solicitations. Default is False") 
+parser.add_argument('--excel',
+                    type = str_to_bool,
+                    nargs = '?',
+                    const = True, 
+                    default = False,
+                    dest = 'excel',
+                    help = "Whether or not to write output to excel. Default is False")                                     
 
 from utils.get_nightly_data import get_nightly_data
+from utils.writer import write_to_csv
 
 logger = logging.getLogger(__name__)
 
@@ -83,10 +91,14 @@ def main():
     args = parser.parse_args()
     fbo_dates = get_dates(start_date = args.start_date, end_date = args.end_date)
     tbm_filter = args.tbm_filter
+    excel = args.excel
     # By default, the executor sets number of workers to the # of CPUs.
     with ProcessPoolExecutor() as executor:
         fn = partial(get_nightly_data, tbm_filtering = tbm_filter)
         executor.map(fn, fbo_dates)
+    if excel:
+        write_to_csv()
+
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO,
