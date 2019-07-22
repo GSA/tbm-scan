@@ -5,14 +5,16 @@ import os
 def read_json():
     path_to_json = os.path.join(os.getcwd(),'data')
     json_files = [f for f in os.listdir(path_to_json) if f.endswith('.json')]
+    files_to_delete = []
     all_data = []
     for json_file in json_files:
         json_file = os.path.join(path_to_json, json_file)
+        files_to_delete.append(json_file)
         with open(json_file, 'r') as jf:
             data = json.load(jf)
             all_data.append(data)
     
-    return all_data
+    return all_data, files_to_delete
 
 
 def append_to_csv(json_data):
@@ -51,5 +53,6 @@ def transform_data(json_data):
     return csv_rows, csv_columns
 
 def write_to_csv():
-    all_data = read_json()
+    all_data, files_to_delete = read_json()
     [append_to_csv(x) for x in all_data]
+    [os.remove(f) for f in files_to_delete]
