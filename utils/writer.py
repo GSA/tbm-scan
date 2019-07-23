@@ -33,11 +33,12 @@ def data_to_df(json_data):
 
 def transform_data(json_data):
     '''
-    Transofrm the fbo data returned by get_nightly_data so that each notice dictionary contains
+    Transform the fbo data returned by get_nightly_data so that each notice dictionary contains
     a key stating its notice type. This will make it easier when writing the results to csv.
     '''
     csv_rows = []
     fbo_date, data = json_data
+    all_empty = True
     for k in data:
         notices = data[k]
         for notice in notices:
@@ -47,6 +48,10 @@ def transform_data(json_data):
             for key in notice:
                 csv_row[key] = notice[key]
             csv_rows.append(csv_row)
+            all_empty = False
+    if all_empty:
+        #Be sure we insert an empty row with the fbo date to prevent duplicative future scans
+        csv_rows.append({'fbo date': fbo_date,'notice type': 'NA'})
 
     return csv_rows
 
