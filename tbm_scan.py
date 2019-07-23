@@ -6,6 +6,10 @@ import json
 import logging
 import os
 
+#see https://stackoverflow.com/questions/50168647/multiprocessing-causes-python-to-crash-and-gives-an-error-may-have-been-in-progr
+#also could set this in ~/.bash_profile
+os.environ["OBJC_DISABLE_INITIALIZE_FORK_SAFETY"] = "YES"
+
 def str_to_bool(v):
     '''
     Use with argpase
@@ -49,7 +53,7 @@ parser.add_argument('--excel',
                     help = "Whether or not to write output to excel. Default is False")                                     
 
 from utils.get_nightly_data import get_nightly_data
-from utils.writer import write_to_csv
+from utils.writer import write_to_csv, get_last_scan_date
 
 logger = logging.getLogger(__name__)
 
@@ -67,6 +71,7 @@ def get_dates(start_date = None, end_date = None):
     """
     fbo_dates = []
     if all([start_date, end_date]):
+        #since the user provided a date range, fetch all notices between those dates inclusive
         start_date = datetime.strptime(start_date, "%Y-%m-%d")
         end_date = datetime.strptime(end_date, "%Y-%m-%d")
         delta = end_date - start_date
@@ -75,9 +80,22 @@ def get_dates(start_date = None, end_date = None):
             fbo_date = fbo_date.strftime("%Y%m%d")
             fbo_dates.append(fbo_date)
     else:
-        now_minus_two = datetime.utcnow() - timedelta(2)
-        now_minus_two = now_minus_two.strftime("%Y%m%d")
-        fbo_dates.append(now_minus_two)
+        #if the user didn't provie a date range, default to the most recent FTP dump day
+        #unless data.csv is present
+        csv_file = os.path.join(os.getcwd(), 'data.csv')
+        csv_exists = os.path.exists(csv_file)
+        if csv_exists:
+            last_scan_date = get_last_scan_date(csv_file)
+            now_minus_two = datetime.utcnow() - timedelta(2)
+            delta = now_minus_two - last_scan_date
+            for i in range(1, delta.days + 1):
+                fbo_date = last_scan_date + timedelta(i)
+                fbo_date = fbo_date.strftime("%Y%m%d")
+                fbo_dates.append(fbo_date)
+        else:
+            now_minus_two = datetime.utcnow() - timedelta(2)
+            now_minus_two = now_minus_two.strftime("%Y%m%d")
+            fbo_dates.append(now_minus_two)
     
     return fbo_dates
 

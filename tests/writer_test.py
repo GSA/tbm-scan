@@ -18,14 +18,15 @@ class WriterTestCase(unittest.TestCase):
         pass
 
     def test_transform_data(self):
-        data = {'PRESOL': [{'a': 1, 'b': 2}, {'a': 3, 'b': 4}, {'a': 1, 'b': 2, 'c': 3}],
+        data = ('20190501',
+                {'PRESOL': [{'a': 1, 'b': 2}, {'a': 3, 'b': 4}, {'a': 1, 'b': 2, 'c': 3}],
                 'MOD': [{'a': 1, 'b': 2}, {'a': 3, 'b': 4}, {'a': 1, 'b': 2, 'c': 3, 'd': 1}]}
+        )
         result = transform_data(data)
-        expected = ([{'notice type': 'PRESOL', 'a': 1, 'b': 2},
-                    {'notice type': 'PRESOL', 'a': 3, 'b': 4},
-                    {'notice type': 'PRESOL', 'a': 1, 'b': 2, 'c': 3},
-                    {'notice type': 'MOD', 'a': 1, 'b': 2},
-                    {'notice type': 'MOD', 'a': 3, 'b': 4},
-                    {'notice type': 'MOD', 'a': 1, 'b': 2, 'c': 3, 'd': 1}],
-                    {'a', 'b', 'c', 'd', 'notice type'})
+        expected = [ {'notice type': 'PRESOL', 'fbo date': '20190501', 'a': 1, 'b': 2},
+                     {'notice type': 'PRESOL', 'fbo date': '20190501', 'a': 3, 'b': 4},
+                     {'notice type': 'PRESOL', 'fbo date': '20190501', 'a': 1, 'b': 2, 'c': 3},
+                     {'notice type': 'MOD', 'fbo date': '20190501', 'a': 1, 'b': 2},
+                     {'notice type': 'MOD', 'fbo date': '20190501', 'a': 3, 'b': 4},
+                     {'notice type': 'MOD', 'fbo date': '20190501', 'a': 1, 'b': 2, 'c': 3, 'd': 1}]
         self.assertEqual(result, expected)

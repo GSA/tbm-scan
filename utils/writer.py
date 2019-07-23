@@ -1,6 +1,9 @@
 import csv
+from datetime import datetime
 import json
 import os
+
+import pandas as pd
 
 def read_json():
     path_to_json = os.path.join(os.getcwd(),'data')
@@ -12,47 +15,62 @@ def read_json():
         files_to_delete.append(json_file)
         with open(json_file, 'r') as jf:
             data = json.load(jf)
-            all_data.append(data)
+            fbo_date = "".join(s for s in json_file if s.isdigit())
+            all_data.append((fbo_date, data))
     
     return all_data, files_to_delete
 
 
-def append_to_csv(json_data):
+def data_to_df(json_data):
     '''
     Append data to data.csv after transforming it.
     '''
-    #json_data is synoymous with merged_notices_dict as returned by get_nightly_data
-    csv_rows, csv_columns = transform_data(json_data)
-    csv_file = os.path.join(os.getcwd(), 'data.csv')
-    with open(csv_file, 'a+') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames = csv_columns)
-        writer.writeheader()
-        for row in csv_rows:
-            writer.writerow(row)
-
+    csv_rows = transform_data(json_data)
+    df = pd.DataFrame(csv_rows)
+    
+    return df
+    
 
 def transform_data(json_data):
     '''
     Transofrm the fbo data returned by get_nightly_data so that each notice dictionary contains
     a key stating its notice type. This will make it easier when writing the results to csv.
     '''
-    #json_data is synoymous with merged_notices_dict as returned by get_nightly_data
-    keys = ['notice type']
     csv_rows = []
-    for k in json_data:
-        notices = json_data[k]
+    fbo_date, data = json_data
+    for k in data:
+        notices = data[k]
         for notice in notices:
             csv_row = {}
             csv_row['notice type'] = k
+            csv_row['fbo date'] = fbo_date
             for key in notice:
-                keys.append(key)
                 csv_row[key] = notice[key]
             csv_rows.append(csv_row)
-    csv_columns = set(keys)
 
-    return csv_rows, csv_columns
+    return csv_rows
+
+def get_last_scan_date(csv_file):
+    df = pd.read_csv(csv_file, dtype = str)
+    dates = df['fbo date'].astype(str)
+    last_scan_date = dates.apply(lambda x: datetime.strptime(x, "%Y%m%d")).max()
+
+    return last_scan_date
+
 
 def write_to_csv():
     all_data, files_to_delete = read_json()
-    [append_to_csv(x) for x in all_data]
+    dfs = [data_to_df(x) for x in all_data]
+    df = pd.concat(dfs, ignore_index=True, sort=True)
+    csv_file = os.path.join(os.getcwd(), 'data.csv')
+    csv_exists = os.path.exists(csv_file)
+    if csv_exists:
+        #if there's a pre-existing csv, read it in to concat with this one
+        pre_existing_df = pd.read_csv(csv_file, dtype = str)
+        updated_df = pd.concat([df, pre_existing_df], ignore_index=True, sort=True)
+        updated_df.to_csv(csv_file, index = False)
+    else:
+        #if there's no pre-existing csv, write what we've got as the first one
+        df.to_csv(csv_file, index = False)
+    #clean up the json files
     [os.remove(f) for f in files_to_delete]
