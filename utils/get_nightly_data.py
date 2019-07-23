@@ -307,11 +307,12 @@ def write_nightly_data(merge_notices_dict, date):
     '''
     Write a dict of notice data to json
     '''
-    json_out_path = make_outpath('data')
+    out_path = make_outpath('data')
     json_file = f"{date}-result.json"
-    json_file = os.path.join(json_out_path, json_file)
+    json_file = os.path.join(out_path, json_file)
     with open(json_file, 'w') as f:
         json.dump(merge_notices_dict, f)
+
 
 def tbm_filter(merge_notices_dict):
     tbm_terms = {'technology business management',
@@ -361,5 +362,7 @@ def get_nightly_data(date = None, tbm_filtering = True):
     else:
         write_nightly_data(merge_notices_dict, date)
 
+
 if __name__ == '__main__':
     get_nightly_data()
+    
