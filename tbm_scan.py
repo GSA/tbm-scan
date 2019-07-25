@@ -50,7 +50,14 @@ parser.add_argument('--excel',
                     const = True, 
                     default = False,
                     dest = 'excel',
-                    help = "Whether or not to write output to excel. Default is False")                                     
+                    help = "Whether or not to write output to excel. Default is False")
+parser.add_argument('--field-filter',
+                    type = str_to_bool,
+                    nargs = '?',
+                    const = True, 
+                    default = False,
+                    dest = 'field_filter',
+                    help = "Whether or not to filter out superfluous fields (columns) in the excel output. Default is False")                                      
 
 from utils.get_nightly_data import get_nightly_data
 from utils.writer import write_to_csv, get_last_scan_date
@@ -109,13 +116,12 @@ def main():
     args = parser.parse_args()
     fbo_dates = get_dates(start_date = args.start_date, end_date = args.end_date)
     tbm_filter = args.tbm_filter
-    excel = args.excel
     # By default, the executor sets number of workers to the # of CPUs.
     with ProcessPoolExecutor() as executor:
         fn = partial(get_nightly_data, tbm_filtering = tbm_filter)
         executor.map(fn, fbo_dates)
-    if excel:
-        write_to_csv()
+    if args.excel:
+        write_to_csv(args.field_filter)
 
 
 if __name__ == '__main__':
