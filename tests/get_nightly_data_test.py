@@ -11,7 +11,7 @@ import requests_mock
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__) ) ) )
 from utils.get_nightly_data import clean_line_text, get_email_from_url, extract_emails, \
-    merge_dicts, id_and_count_notice_tags, pseudo_xml_to_json, get_nightly_data
+    merge_dicts, id_and_count_notice_tags, pseudo_xml_to_json, get_nightly_data, tbm_filter
 from fixtures.nightly_file import nightly_file
 from fixtures import pseudo_xml_to_json_expected
 
@@ -138,6 +138,16 @@ class GetNightlyDataTestCase(unittest.TestCase):
         #cleanup here
         os.remove(os.path.join(os.getcwd(), 'data', f'{date}-result.json'))
         self.assertTrue(True)
+
+    def test_tbm_filter(self):
+        data = {'PRESOL':[{'DESC':'This is a tbm solicitation.'},
+                          {'DESC':'This is a dltbm solicitation.'},
+                          {'DESC':'This is a Technology Business Management solicitation.'},
+                          {'DESC':'This is not TBM because tbm means Tactical Ballistic Missile'}]}
+        result = tbm_filter(data)
+        expected = {'PRESOL':[{'DESC':'This is a tbm solicitation.'},
+                              {'DESC':'This is a Technology Business Management solicitation.'}]}
+        self.assertEqual(result, expected)
 
 if __name__ == '__main__':
     unittest.main()
