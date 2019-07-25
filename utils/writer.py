@@ -36,6 +36,9 @@ def transform_data(json_data):
     Transform the fbo data returned by get_nightly_data so that each notice dictionary contains
     a key stating its notice type. This will make it easier when writing the results to csv.
     '''
+    user_desired_fields = {'AGENCY','CONTACT','DATE','DESC','LOCATION',
+                           'NAICS','RESPDATE','SETASIDE',
+                           'SOLNBR','SUBJECT','URL','YEAR'}
     csv_rows = []
     fbo_date, data = json_data
     all_empty = True
@@ -46,7 +49,8 @@ def transform_data(json_data):
             csv_row['notice type'] = k
             csv_row['fbo date'] = fbo_date
             for key in notice:
-                csv_row[key] = notice[key]
+                if key in user_desired_fields:
+                    csv_row[key] = notice[key]
             csv_rows.append(csv_row)
             all_empty = False
     if all_empty:
