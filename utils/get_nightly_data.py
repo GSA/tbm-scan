@@ -315,22 +315,26 @@ def write_nightly_data(merge_notices_dict, date):
 
 
 def tbm_filter(merge_notices_dict):
-    tbm_terms = {'technology business management',
-                 'tbm',
-                 'tbma',
-                 'it spending transparency',
-                 'tbm framework',
-                 'it tower',
-                 'sub-towers',
-                 'cost pool',
-                 'sub-pools'}
+
+    re_str = (
+        r'(\btbm\b|'
+        r'technology business management|'
+        r'\btbma\b|'
+        r'it spending transparency|'
+        r'tbm framework|'
+        r'it tower|'
+        r'sub-towers)'
+            )
+    tbm_re = re.compile(re_str)
     tbm_notices = {k:[] for k in merge_notices_dict}
     for notice_type in merge_notices_dict:
         notices = merge_notices_dict[notice_type]
         for notice in notices:
-            notice_values = " ".join(notice.values()).lower()
-            is_tbm = any(substring in notice_values for substring in tbm_terms)
-            if is_tbm:
+            subject = notice.get('SUBJECT','')
+            desc = notice.get('DESC','')
+            notice_values = f'{subject} {desc}'.lower()
+            is_tbm = tbm_re.search(notice_values)
+            if is_tbm and 'tactical ballistic missile' not in notice_values:
                 tbm_notices[notice_type].append(notice)
     
     return tbm_notices
