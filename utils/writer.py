@@ -21,17 +21,17 @@ def read_json():
     return all_data, files_to_delete
 
 
-def data_to_df(json_data):
+def data_to_df(json_data, field_filter = False):
     '''
     Append data to data.csv after transforming it.
     '''
-    csv_rows = transform_data(json_data)
+    csv_rows = transform_data(json_data, field_filter)
     df = pd.DataFrame(csv_rows)
     
     return df
     
 
-def transform_data(json_data):
+def transform_data(json_data, field_filter = False):
     '''
     Transform the fbo data returned by get_nightly_data so that each notice dictionary contains
     a key stating its notice type. This will make it easier when writing the results to csv.
@@ -49,7 +49,10 @@ def transform_data(json_data):
             csv_row['notice type'] = k
             csv_row['fbo date'] = fbo_date
             for key in notice:
-                if key in user_desired_fields:
+                if field_filter:
+                    if key in user_desired_fields:
+                        csv_row[key] = notice[key]
+                else:
                     csv_row[key] = notice[key]
             csv_rows.append(csv_row)
             all_empty = False
@@ -67,9 +70,9 @@ def get_last_scan_date(csv_file):
     return last_scan_date
 
 
-def write_to_csv():
+def write_to_csv(field_filter = False):
     all_data, files_to_delete = read_json()
-    dfs = [data_to_df(x) for x in all_data]
+    dfs = [data_to_df(x, field_filter) for x in all_data]
     df = pd.concat(dfs, ignore_index=True, sort=True)
     csv_file = os.path.join(os.getcwd(), 'data.csv')
     csv_exists = os.path.exists(csv_file)

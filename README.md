@@ -77,6 +77,7 @@ python tbm_scan.py -tf False --excel True
 
 That will get every solicitation since the most recent date in `data.csv`. *Note: this means that you need to keep `data.csv` within this project directory if you plan to intermittently run this script to accumlate recent solicitations.* 
 
+
 ## Running the tests
 
 To run the tests, make sure you've activated the virtual environment and then run:
@@ -84,7 +85,6 @@ To run the tests, make sure you've activated the virtual environment and then ru
 ```bash
 python -W ignore -m unittest discover tests -p '*_test.py'
 ```
-
 
 ## Deployment
 
