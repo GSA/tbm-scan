@@ -24,7 +24,11 @@ def str_to_bool(v):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 argparse_desc = ('Get solicitations from fbo.gov between two dates inclusive '
-                 '(if both flags are used) or from the day before yesteday.')
+                 '(if both flags are used) or from the day before yesteday.'
+                 'The output is written to data/ as a JSON file for each date by default.'
+                 'You can override the default behavior (e.g. filtering out useless fields)'
+                 ' by using the flag.'
+                 )
 parser = argparse.ArgumentParser(description = argparse_desc)
 parser.add_argument('-s',
                     '--start-date',
