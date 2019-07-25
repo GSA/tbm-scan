@@ -5,6 +5,8 @@ verify_ssl = true
 
 [dev-packages]
 pylint = "*"
+responses = "*"
+requests-mock = "*"
 
 [packages]
 beautifulsoup4 = "*"
