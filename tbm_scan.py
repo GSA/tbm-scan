@@ -110,22 +110,31 @@ def get_dates(start_date = None, end_date = None):
     
     return fbo_dates
 
-def main():
+def main(from_jupyter = False, start_date = None, end_date = None, tbm_filter = False):
     """Void function that runs the nightly scraper using argparse to accept a user-defined date range
     and multiprocessing for a slight speed boost. Data is written to disk as JSON.
     
     Returns:
         None
     """
-    args = parser.parse_args()
-    fbo_dates = get_dates(start_date = args.start_date, end_date = args.end_date)
-    tbm_filter = args.tbm_filter
+    if not from_jupyter:
+        args = parser.parse_args()
+        fbo_dates = get_dates(start_date = args.start_date, end_date = args.end_date)
+        tbm_filter = args.tbm_filter
+        excel = args.excel
+        field_filter = args.field_filter
+    else:
+        fbo_dates = get_dates(start_date = start_date, end_date = end_date)
+        excel = True
+        field_filter = True
+    
     # By default, the executor sets number of workers to the # of CPUs.
     with ProcessPoolExecutor() as executor:
         fn = partial(get_nightly_data, tbm_filtering = tbm_filter)
         executor.map(fn, fbo_dates)
-    if args.excel:
-        write_to_csv(args.field_filter)
+    
+    if excel:
+        write_to_csv(field_filter)
 
 
 if __name__ == '__main__':
