@@ -2,12 +2,18 @@ import csv
 from datetime import datetime
 import json
 import os
+import sys
 
 import pandas as pd
 
 def read_json():
     path_to_json = os.path.join(os.getcwd(),'data')
     json_files = [f for f in os.listdir(path_to_json) if f.endswith('.json')]
+    if not json_files:
+        print("\tThere's no new FBO data. Wait another day to run this scan.")
+        print("\tThis means you can safefully ignore the following error message.")
+        print("*"*80)
+        sys.exit(0)
     files_to_delete = []
     all_data = []
     for json_file in json_files:
