@@ -3,28 +3,30 @@ Script to scan fbo.gov for solicitations related to Technology Business Manageme
  - write to csv as opposed to json
  - specify a date range for the scan
  - filter for TBM-related solicitations or get everything
+ 
+ You can also run the scans from with a Jupyter Notebook.
 
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. 
 
-See Deployment for notes on how to deploy the project.
-
-### Prerequisites
-
-We use [pipenv](https://docs.pipenv.org/en/latest/) for creating a virtual environment, but we've also converted our Pipfile to a requirements.txt in case you'd like to use `venv`. Examples use `pipenv`.
+>If you're going to use the CLI tool, we suggest using [pipenv](https://docs.pipenv.org/en/latest/) for creating a virtual environment, but we've also converted our Pipfile to a requirements.txt in case you'd like to use `venv`. Examples use `pipenv`.
 
 
-### Installing
+### Clone the Repo
 
-First, `git clone` this repo:
+You can `git clone` this repo with:
 
 ```bash
 git clone https://github.com/GSA/tbm-scan.git
 cd tbm-scan
 ```
 
-Now you can use pipenv to install dependencies and then start a shell session that utilizes the virtual environment:
+### Jupyter Notebook Instructions
+Now that you've got the project locally, open jupyter notebook and open `TBM_Scan.ipynb`. Make sure you're using a Python 3 kernel.
+
+### CLI Instructions
+With the project cloned, you can use pipenv to install dependencies and then start a shell session that utilizes the virtual environment:
 
 ```bash
 pipenv install
@@ -85,10 +87,6 @@ To run the tests, make sure you've activated the virtual environment and then ru
 ```bash
 python -W ignore -m unittest discover tests -p '*_test.py'
 ```
-
-## Deployment
-
-TODO
 
 ## Contributing
 
