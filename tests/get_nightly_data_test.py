@@ -5,7 +5,6 @@ import unittest
 from unittest.mock import patch, Mock
 
 from bs4 import BeautifulSoup
-import responses
 import requests
 import requests_mock
 
