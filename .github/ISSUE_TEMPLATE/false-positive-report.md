@@ -3,7 +3,7 @@ name: False Positive Report
 about: Use this issue template to report false positives
 title: 'BUG:'
 labels: ''
-assignees: ''
+assignees: csmcallister
 
 ---
 
